@@ -10,6 +10,8 @@ namespace CustomForm
     {
         static void Main(string[] args)
         {
+            DynamicInfoManager.GenernateDynamicInstance();
+            Console.ReadKey();
         }
     }
 }
