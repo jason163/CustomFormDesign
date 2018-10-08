@@ -60,6 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BizException.cs" />
+    <Compile Include="Biz\TemplateBiz.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="CustomFormUtils.cs" />
     <Compile Include="DA\FormMasterDA.cs" />
@@ -79,8 +81,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Biz\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

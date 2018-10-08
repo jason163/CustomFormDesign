@@ -27,7 +27,7 @@ namespace CustomForm.Entity
         public string FormDesc { get; set; }
 
         /// <summary>
-        /// 表单内容
+        /// 模板HTML内容
         /// </summary>
         public string ParseForm { get; set; }
     }
