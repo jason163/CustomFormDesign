@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CustomForm
+namespace CustomForm.Entity
 {
     /// <summary>
     /// 动态表实体

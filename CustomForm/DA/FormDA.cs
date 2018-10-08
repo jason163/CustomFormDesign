@@ -8,8 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CustomForm
+namespace CustomForm.DA
 {
+    /// <summary>
+    /// 动态表DA
+    /// </summary>
     public class FormDA
     {
         public static List<dynamic> GetDynamicData()
@@ -22,8 +25,7 @@ namespace CustomForm
             return dt.ToExPando();
         }
 
-        
-
+        #region 动态表结构维护
         /// <summary>
         /// 创建表单数据库结构
         /// </summary>
@@ -36,28 +38,28 @@ namespace CustomForm
             cmd.SetParameterValue("@TableName", tableInfo.TableName);
 
             StringBuilder columns = new StringBuilder();
-            foreach(var field in tableInfo.Columns.OrderBy(p=>p.Prority).ToList())
+            foreach (var field in tableInfo.Columns.OrderBy(p => p.Prority).ToList())
             {
                 if (field.IsKey)
                 {
                     columns.AppendFormat(string.Format(" {0} {1} IDENTITY(1,1) NOT NULL ,", field.Name, field.Type));
                 }
                 else
-                {                    
+                {
                     columns.AppendLine(string.Format(" {0} {1} NULL ,", field.Name, field.Type));
                     if (field.IsIndex)
                     {
                         cmd.SetParameterValue("@IndexColumn", field.Name);
                     }
                 }
-                
+
             }
             string strColumns = columns.ToString();
             strColumns = strColumns.Substring(0, strColumns.Length - 1);
             cmd.SetParameterValue("@Columns", strColumns);
 
             return cmd.ExecuteNonQuery();
-                 
+
         }
 
         /// <summary>
@@ -83,7 +85,10 @@ namespace CustomForm
             return cmd.ExecuteNonQuery();
 
         }
+        #endregion
 
+
+        #region 动态表数据维护
         /// <summary>
         /// 保存
         /// </summary>
@@ -95,10 +100,10 @@ namespace CustomForm
             cmd.SetParameterValue("@TableName", string.Format("{0}", formInfo.TableName));
             List<string> cols = new List<string>();
             List<object> vals = new List<object>();
-            foreach(var item in formInfo.ColumnAndValues)
+            foreach (var item in formInfo.ColumnAndValues)
             {
                 cols.Add(item.Key);
-                if(int.TryParse(item.Value.ToString(),out int val))
+                if (int.TryParse(item.Value.ToString(), out int val))
                 {
                     vals.Add(val);
                 }
@@ -107,12 +112,12 @@ namespace CustomForm
                     vals.Add(string.Format("'{0}'", item.Value));
                 }
             }
-            cmd.SetParameterValue("@Columns", string.Join(",",cols));
+            cmd.SetParameterValue("@Columns", string.Join(",", cols));
 
-            cmd.SetParameterValue("@ColumnValues", string.Join(",",vals));
-            
+            cmd.SetParameterValue("@ColumnValues", string.Join(",", vals));
+
             return cmd.ExecuteNonQuery();
-            
+
         }
 
         /// <summary>
@@ -128,7 +133,7 @@ namespace CustomForm
             List<string> cols = new List<string>();
             foreach (var item in formInfo.ColumnAndValues)
             {
-                cols.Add(string.Format(" {0}='{1}'",item.Key.Trim(),item.Value.ToString().Trim()));
+                cols.Add(string.Format(" {0}='{1}'", item.Key.Trim(), item.Value.ToString().Trim()));
             }
             cmd.SetParameterValue("@ColumnValues", string.Join(",", cols));
 
@@ -148,7 +153,7 @@ namespace CustomForm
             DataCommand cmd = DataCommandManager.GetDataCommand("LoadFormData");
             cmd.SetParameterValue("@DBName", string.Format("{0}", formInfo.DBName));
             cmd.SetParameterValue("@TableName", string.Format("{0}", formInfo.TableName));
-            
+
             cmd.SetParameterValue("@FormMasterSysNo", formInfo.FormMasterSysNo);
 
             cmd.SetParameterValue("@CustomerSysNo", formInfo.CustomerSysNo);
@@ -157,7 +162,7 @@ namespace CustomForm
         }
 
         /// <summary>
-        /// 根据系统编号加载动态数据
+        /// 根据表单系统编号加载动态数据
         /// </summary>
         /// <param name="formInfo"></param>
         /// <returns></returns>
@@ -172,5 +177,8 @@ namespace CustomForm
 
             return cmd.ExecuteDataTable();
         }
+        #endregion
+
+
     }
 }

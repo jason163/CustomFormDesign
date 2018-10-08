@@ -6,7 +6,7 @@ using System.Web;
 namespace CustomForm.Entity
 {
     /// <summary>
-    /// 保存自定义表单实体
+    /// 自定义表单实体信息
     /// </summary>
     public class CustomFormDataInfo
     {

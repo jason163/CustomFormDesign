@@ -9,8 +9,12 @@ using System.Threading.Tasks;
 
 namespace CustomForm.DA
 {
+    /// <summary>
+    /// 表单模板维护
+    /// </summary>
     public class FormMasterDA
     {
+        #region 表单模板维护
         /// <summary>
         /// 创建FormMaster信息
         /// </summary>
@@ -37,21 +41,11 @@ namespace CustomForm.DA
         public static FormMaster LoadFormMaster(int sysNo)
         {
             DataCommand cmd = DataCommandManager.GetDataCommand("LoadFormMaster");
-            cmd.SetParameterValue("@SysNo",sysNo);
-            FormMaster result = cmd.ExecuteEntity<FormMaster>();
-            return result;
-        }
-
-        //
-        /// <summary>
-        /// 获取单个FormMaster信息
-        /// </summary>
-        public static FormMaster LoadTemplateByForm(int sysNo)
-        {
-            DataCommand cmd = DataCommandManager.GetDataCommand("LoadTemplateByFormSysNo");
             cmd.SetParameterValue("@SysNo", sysNo);
             FormMaster result = cmd.ExecuteEntity<FormMaster>();
             return result;
         }
+        #endregion
+
     }
 }

@@ -8,6 +8,9 @@ using System.Web.Mvc;
 
 namespace CustomForm.UI.Controllers
 {
+    /// <summary>
+    /// 表单模板服务
+    /// </summary>
     public class ParseController : Controller
     {
         /// <summary>

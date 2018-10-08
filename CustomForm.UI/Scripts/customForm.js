@@ -196,7 +196,7 @@ var leipiFormDesign = {
         return JSON.stringify(parse_form);
     },
     /*type  =  save 保存设计 versions 保存版本  close关闭 */
-    fnCheckForm: function (type) {
+    fnCheckForm: function (type, ajaxUrl) {
         
         if (leipiEditor.queryCommandState('source'))
             leipiEditor.execCommand('source');//切换到编辑模式才提交，否则有bug
@@ -239,7 +239,7 @@ var leipiFormDesign = {
             //异步提交数据
             $.ajax({
                 type: 'POST',
-                url: '/Parse/Save',
+                url: ajaxUrl,
                 dataType: 'json',
                 contentType: "application/json",
                 data: $.toJSON(data),

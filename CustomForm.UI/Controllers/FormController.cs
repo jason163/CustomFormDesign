@@ -10,8 +10,116 @@ using System.Web.Mvc;
 
 namespace CustomForm.UI.Controllers
 {
+    /// <summary>
+    /// 表单服务
+    /// </summary>
     public class FormController : Controller
     {
+        /// <summary>
+        /// 模板保存
+        /// </summary>
+        /// <param name="formInfo"></param>
+        /// <returns></returns>
+        public JsonResult Save(CustomFormInfo formInfo)
+        {
+            ParseForm form = JsonConvert.DeserializeObject<ParseForm>(formInfo.ParseForm);
+
+            CustomTableInfo customTableInfo = new CustomTableInfo();
+            // 表单数据库名
+            customTableInfo.DBName = Constant.CustomFormDBName;
+
+            FormMaster master = new FormMaster();
+            master.SysNo = int.Parse(formInfo.Formid);
+            if (master.SysNo > 1)
+            {
+                master = FormMasterDA.LoadFormMaster(int.Parse(formInfo.Formid));
+            }
+            else
+            {
+                master.FormCode = string.Format("dbo.{0}", formInfo.FormCode); //"dbo.customertable1";
+                master.FormName = formInfo.FormName;// "testForm";
+                master.FormDesc = formInfo.FormDesc;
+            }
+            // 表名
+            customTableInfo.TableName = master.FormCode;
+            master.FormType = 0;
+            master.Template = form.Template;
+            master.ParseTemplate = form.Parse;
+            master.ControllerTemplate = JsonConvert.SerializeObject(form.Data);
+
+            if (master.SysNo < 1)
+            {
+                // 加载默认列
+                customTableInfo.InitDefaultColumns();
+
+                foreach (var control in form.AddFileds)
+                {
+                    FieldInfo field = new FieldInfo();
+                    field.Name = control.Title;
+                    field.Type = "NVARCHAR(20)";
+                    field.Value = control.Value;
+                    field.Prority = 2;
+                    customTableInfo.Columns.Add(field);
+                }
+                // 控件数
+                master.FieldCount = form.AddFileds.Count;
+                FormMasterDA.InsertFormMaster(master);
+
+                FormDA.CreateFormTable(customTableInfo);
+            }
+            else
+            {
+                // 验证
+                DataTable dt = TableValidateDA.QueryTableColumns(Constant.CustomFormDBName, customTableInfo.TableName);
+                List<string> columns = new List<string>();
+                if (dt != null && dt.Rows != null && dt.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        columns.Add(dr[0].ToString());
+                    }
+                }
+                bool isExist = false;
+                string sameTitles = string.Empty;
+                form.AddFileds.ForEach(p =>
+                {
+                    if (columns.Contains(p.Title))
+                    {
+                        isExist = true;
+                        sameTitles += p.Title + "|";
+                    }
+                });
+                if (isExist)
+                {
+                    return Json(new { Code = -1, Data = new object(), Msg = "数据库中已存在相同字段:" + sameTitles });
+                }
+
+                customTableInfo.ClearDefaultColumns();
+
+                master.EditDate = DateTime.Now;
+                master.EditUserName = "update";
+                // 更新控件数
+                master.FieldCount = master.FieldCount + form.AddFileds.Count;
+                FormMasterDA.UpdateFormMaster(master);
+
+                if (form.AddFileds != null && form.AddFileds.Count > 0)
+                {
+                    foreach (var control in form.AddFileds)
+                    {
+                        FieldInfo field = new FieldInfo();
+                        field.Name = control.Title;
+                        field.Type = "NVARCHAR(20)";
+                        field.Prority = 2;
+                        customTableInfo.Columns.Add(field);
+                    }
+                    FormDA.UpdateFormTable(customTableInfo);
+                }
+
+            }
+
+            return Json(new object());
+        }
+
         /// <summary>
         /// 表单模板详情
         /// </summary>
@@ -53,7 +161,7 @@ namespace CustomForm.UI.Controllers
         }
 
         /// <summary>
-        /// 真实表单详情
+        /// 动态表单详情
         /// </summary>
         /// <param name="id">真实表单编号</param>
         /// <returns></returns>
@@ -78,7 +186,7 @@ namespace CustomForm.UI.Controllers
         }
 
         /// <summary>
-        /// 表单数据维护
+        /// 动态表单数据维护
         /// </summary>
         /// <param name="dataInfo"></param>
         /// <returns></returns>

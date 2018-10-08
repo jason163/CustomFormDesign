@@ -26,7 +26,7 @@
         <button type="button" onclick="leipiFormDesign.exec('qrcode');" class="btn btn-info">二维码</button>
         <button type="button" onclick="leipiFormDesign.exec('listctrl');" class="btn btn-info">列表控件</button>
         <button type="button" onclick="leipiFormDesign.fnReview();" class="btn btn-primary">预览</button>
-        <button type="button" onclick="leipiFormDesign.fnCheckForm('save');" class="btn btn-primary">提交</button>
+        <button type="button" onclick="leipiFormDesign.fnCheckForm('save','/Form/Save');" class="btn btn-primary">提交</button>
         <button type="button" onclick="saveForm();" class="btn btn-primary">保存并提交</button>
     </p>
 </div>
@@ -85,7 +85,7 @@
             $("#formDesc").val(desc);
 
             // commit
-            leipiFormDesign.fnCheckForm('save');
+            leipiFormDesign.fnCheckForm('save','/Form/Save');
         }
 </script>
 

@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace CustomForm.DA
 {
+    /// <summary>
+    /// 系统表DA
+    /// </summary>
     public class TableValidateDA
     {
         /// <summary>

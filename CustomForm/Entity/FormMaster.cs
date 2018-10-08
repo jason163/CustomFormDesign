@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 
 namespace CustomForm.Entity
 {
+    /// <summary>
+    /// 表单模板实体信息
+    /// </summary>
     public class FormMaster
     {
         public FormMaster()
         {
             Status = 1;
             InUser = 0;
-            InUserName = "test";
+            InUserName = "admin";
             InDate = DateTime.Now;
         }
 

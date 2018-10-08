@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CustomForm.Entity
 {
     /// <summary>
-    /// 自定义表信息
+    /// 自定义表结构信息
     /// </summary>
     public class CustomTableInfo
     {
@@ -57,7 +57,7 @@ namespace CustomForm.Entity
     }
 
     /// <summary>
-    /// 字段信息
+    /// 表字段信息
     /// </summary>
     public class FieldInfo
     {

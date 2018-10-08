@@ -6,7 +6,7 @@ using System.Web;
 namespace CustomForm.Entity
 {
     /// <summary>
-    /// 
+    /// 模板保存视图信息
     /// </summary>
     public class CustomFormInfo
     {
@@ -32,6 +32,9 @@ namespace CustomForm.Entity
         public string ParseForm { get; set; }
     }
 
+    /// <summary>
+    /// 模板内容信息
+    /// </summary>
     public class ParseForm
     {
         /// <summary>
@@ -68,7 +71,9 @@ namespace CustomForm.Entity
         }
 
     }
-
+    /// <summary>
+    /// 模板中自定义控件实体信息
+    /// </summary>
     public class ControllerInfo : FiledInfo
     {
         /// <summary>
@@ -90,7 +95,7 @@ namespace CustomForm.Entity
     }
 
     /// <summary>
-    /// 表单字段信息
+    /// 控件字段信息
     /// </summary>
     public class FiledInfo
     {
