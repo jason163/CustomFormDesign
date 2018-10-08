@@ -62,30 +62,51 @@ namespace CustomForm
                         // 重新定默认值
                         content = content.Replace(string.Format("value=\"{0}\"", formDic[controllerName].Trim()), string.Format("value=\"{0}\" selected=\"selected\"", formDic[controllerName].Trim()));
                         break;
+                    case "radios":
+                        StringBuilder tmp = new StringBuilder();
+                        //"<span leipiplugins=\"radios\" name=\"data_3\" title=\"Sex\"><input type=\"radio\" name=\"data_3\" value=\"男\"  />男&nbsp;<input type=\"radio\" name=\"data_3\" value=\"女\"  />女&nbsp;</span>"
+                        tmp.Append(string.Format("<span leipiplugins=\"{0}\" name=\"{1}\" title=\"{2}\">", item.LeipiPlugins, item.Name, item.Title));
+                        string[] radiosArr = item.Value.Split(new char[] { ',' });
+                        for (int i = 0; i < radiosArr.Length; i++)
+                        {
+                            if (string.IsNullOrEmpty(radiosArr[i]) || radiosArr[i] == "")
+                                continue;
+                            tmp.Append(string.Format("<input type=\"radio\" name=\"{0}\" value=\"{1}\" {2} />{1}&nbsp;",item.Name, radiosArr[i], radiosArr[i].Equals(formDic[controllerName].Trim())?"checked":""));
+                        }
+                        tmp.Append("</span>");
+                        content = tmp.ToString();
+                        break;
                     case "checkboxs":
-                        if (item.Checked.Equals("checked", StringComparison.CurrentCultureIgnoreCase))
+                        StringBuilder ckStr = new StringBuilder();
+                        //"<span leipiplugins=\"checkboxs\" title=\"Favirote\"><input type=\"checkbox\" name=\"data_6\" value=\"A\"  />A&nbsp;<input type=\"checkbox\" name=\"data_7\" value=\"B\"  />B&nbsp;</span>"
+                        ckStr.Append(string.Format("<span leipiplugins=\"{0}\" name=\"{1}\" title=\"{2}\">", item.LeipiPlugins, item.Name, item.Title));
+                        string[] cksArr = item.Value.Split(new char[] { ',' });
+                        for (int i = 0; i < cksArr.Length; i++)
                         {
-                            content = content.Replace("checked=\"checked\"", "");
+                            if (string.IsNullOrEmpty(cksArr[i]) || cksArr[i] == "")
+                                continue;
+                            bool isChecked = false;
+                            if(formDic[controllerName].Split(new char[] { ',' }).Contains(cksArr[i]))
+                            {
+                                isChecked = true;
+                            }
+                            ckStr.Append(string.Format("<input type=\"checkbox\" name=\"{0}\" value=\"{1}\" {2} />{1}&nbsp;", item.Name, cksArr[i], isChecked ? "checked" : ""));
                         }
-                        string[] array = item.Value.Split(new char[] { ',' });
-                        for(int i = 0; i < array.Length; i++)
-                        {
-                            // 重新定默认值
-                            content = content.Replace(string.Format("value=\"{0}\"", formDic[controllerName].Trim()), string.Format("value=\"{0}\" selected=\"selected\"", formDic[controllerName].Trim()));
-                        }
-                        // 重新定默认值
-                        content = content.Replace(string.Format("value=\"{0}\"", formDic[controllerName].Trim()), string.Format("value=\"{0}\" selected=\"selected\"", formDic[controllerName].Trim()));
+                        ckStr.Append("</span>");
+                        content = ckStr.ToString();
                         break;
                 }
+                
                 //k:data_1;v:content
-                tempController.Add(item.Name, content);
+                tempController.Add(string.IsNullOrEmpty(item.parse_name)?item.Name:item.parse_name, content);
                 
             });
             
             // 替换占位符
             foreach(var item in controllers)
             {
-                content_parse = content_parse.Replace(string.Format("{0}", "{"+item.Name+"}"), tempController[item.Name]);
+                string key = string.IsNullOrEmpty(item.parse_name) ? item.Name : item.parse_name;
+                content_parse = content_parse.Replace(string.Format("{0}", "{"+ key + "}"), tempController[key]);
             }
 
             return content_parse;

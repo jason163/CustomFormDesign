@@ -90,25 +90,26 @@ namespace CustomForm.UI.Controllers
 
             DynamicTableInfo info = new DynamicTableInfo();
             info.TableName = templateInfo.FormCode;
+            info.DBName = Constant.CustomFormDBName;
             foreach(var item in dic)
             {
                 info.ColumnAndValues.Add(item.Key, item.Value);
             }
-            info.ColumnAndValues.Add("FormMasterSysNo", dataInfo.TemplateID);
             info.ColumnAndValues.Add("CustomerSysNo", dataInfo.CustomerSysNo);
-            info.ColumnAndValues.Add("Status", 1);
-            
+            info.ColumnAndValues.Add("Status", 1);            
             
             if(dataInfo.FormID > 0)
             {
+                info.SysNo = dataInfo.FormID;
                 info.ColumnAndValues.Add("EditUser", 1);
                 info.ColumnAndValues.Add("EditUserName", "update");
                 info.ColumnAndValues.Add("EditDate", DateTime.Now);
-
+                FormDA.UpdateFormData(info);
                // FormDA.(info);
             }
             else
             {
+                info.ColumnAndValues.Add("FormMasterSysNo", dataInfo.TemplateID);
                 info.ColumnAndValues.Add("InUser", 1);
                 info.ColumnAndValues.Add("InUserName", "add");
                 info.ColumnAndValues.Add("InDate", DateTime.Now);

@@ -128,7 +128,7 @@ namespace CustomForm
             List<string> cols = new List<string>();
             foreach (var item in formInfo.ColumnAndValues)
             {
-                cols.Add(string.Format(" {0}={1}",item.Key.Trim(),item.Value.ToString().Trim()));
+                cols.Add(string.Format(" {0}='{1}'",item.Key.Trim(),item.Value.ToString().Trim()));
             }
             cmd.SetParameterValue("@ColumnValues", string.Join(",", cols));
 

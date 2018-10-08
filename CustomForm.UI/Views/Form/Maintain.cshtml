@@ -23,12 +23,13 @@
 {
     <script type="text/javascript">
         $(function () {
+
             $("#btn").click(function () {
                 
                 var formData = $.buildEntity($("#formContainer"));
                 var data = {
-                    FormID: @templateSysNo,
-                    FormID: @templateSysNo,
+                    FormID: @formID,
+                    TemplateID: @templateID,
                     CustomerSysNo: @customerSysNo,
                     Data: JSON.stringify(formData)
                 }

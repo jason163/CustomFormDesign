@@ -18,6 +18,18 @@
             } else {
                 val = $.trim($(this).val());
             }
+            if (val == "" || val == "undefined") {
+                if ($(this).attr("leipiplugins") == "radios" || $(this).attr("leipiplugins") == "checkboxs") {
+                    $(this).children().each(function () {
+                        if ($(this).prop("checked")) {
+                            val = val + "," + $(this).attr("value");
+                        }
+                    });
+                    val = val.substring(1, val.length);
+                }
+            }
+
+            
             if (names.length > 1) {
                 for (var i = 0; i < names.length; i++) {
                     if (temp) {
