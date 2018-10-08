@@ -63,6 +63,7 @@
     <Compile Include="Constant.cs" />
     <Compile Include="CustomFormUtils.cs" />
     <Compile Include="DA\FormMasterDA.cs" />
+    <Compile Include="DA\TableValidateDA.cs" />
     <Compile Include="Demo.cs" />
     <Compile Include="Entity\CustomFormDataInfo.cs" />
     <Compile Include="Entity\FormMaster.cs" />

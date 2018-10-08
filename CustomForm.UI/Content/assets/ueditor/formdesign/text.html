@@ -21,7 +21,7 @@ function createElement(type, name)
 {     
     var element = null;     
     try {        
-        element = document.createElement('<'+type+' name="'+name+'">');     
+        element = document.createElement('<'+type+' name="'+name+'" style="border:0px;border-bottom:#000000 1px solid;">');     
     } catch (e) {}   
     if(element==null) {     
         element = document.createElement(type);     

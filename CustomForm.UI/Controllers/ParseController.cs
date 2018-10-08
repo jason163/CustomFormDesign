@@ -2,6 +2,7 @@
 using CustomForm.Entity;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Web.Mvc;
 
@@ -63,6 +64,31 @@ namespace CustomForm.UI.Controllers
             }
             else
             {
+                // 验证
+                DataTable dt = TableValidateDA.QueryTableColumns(Constant.CustomFormDBName, customTableInfo.TableName);
+                List<string> columns = new List<string>();
+                if (dt != null && dt.Rows != null && dt.Rows.Count > 0)
+                {
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        columns.Add(dr[0].ToString());
+                    }
+                }
+                bool isExist = false;
+                string sameTitles = string.Empty;
+                form.AddFileds.ForEach(p =>
+                {
+                    if (columns.Contains(p.Title))
+                    {
+                        isExist = true;
+                        sameTitles += p.Title + "|";
+                    }
+                });
+                if (isExist)
+                {
+                    return Json(new { Code = -1, Data = new object(), Msg = "数据库中已存在相同字段:" + sameTitles });
+                }
+
                 customTableInfo.ClearDefaultColumns();
                 
                 master.EditDate = DateTime.Now;
