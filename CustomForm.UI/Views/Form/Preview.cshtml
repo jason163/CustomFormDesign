@@ -1,0 +1,33 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Preview</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div id="formContainer">
+        @Html.Raw(ViewBag.TempHtml)
+    </div>
+    <div class="row">
+        <button type="button" id="savebtn" class="btn btn-info">保存</button>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script type="text/javascript">
+        $(function () {
+            $("#savebtn").click(function () {
+                var data = $.buildEntity($("#formContainer"));
+            })
+            
+        })
+    </script>
+</body>
+</html>

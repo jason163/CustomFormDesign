@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "自定义表单";
+}
+
+@Scripts.Render("~/Content/assets/ueditor/ueditor.config.js")
+@Scripts.Render("~/Content/assets/ueditor/ueditor.all.js")
+@Scripts.Render("~/Content/assets/ueditor/lang/zh-cn/zh-cn.js")
+@Scripts.Render("~/Content/assets/ueditor/formdesign/leipi.formdesign.v4.js")
+
+@Scripts.Render("~/Scripts/customForm.js")
+
+<div class="alert">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <strong>提醒：</strong>单选框和复选框，如：<code>{|-</code>选项<code>-|}</code>两边边界是防止误删除控件，程序会把它们替换为空，请不要手动删除！
+</div>
+<div class="container">
+    <p>
+        <button type="button" onclick="leipiFormDesign.exec('text');" class="btn btn-info">文本框</button>
+        <button type="button" onclick="leipiFormDesign.exec('textarea');" class="btn btn-info">多行文本</button>
+        <button type="button" onclick="leipiFormDesign.exec('select');" class="btn btn-info">下拉菜单</button>
+        <button type="button" onclick="leipiFormDesign.exec('radios');" class="btn btn-info">单选框</button>
+        <button type="button" onclick="leipiFormDesign.exec('checkboxs');" class="btn btn-info">复选框</button>
+        <button type="button" onclick="leipiFormDesign.exec('macros');" class="btn btn-info">宏控件</button>
+        <button type="button" onclick="leipiFormDesign.exec('progressbar');" class="btn btn-info">进度条</button>
+        <button type="button" onclick="leipiFormDesign.exec('qrcode');" class="btn btn-info">二维码</button>
+        <button type="button" onclick="leipiFormDesign.exec('listctrl');" class="btn btn-info">列表控件</button>
+        <button type="button" onclick="leipiFormDesign.fnReview();" class="btn btn-primary">预览</button>
+        <button type="button" onclick="leipiFormDesign.fnCheckForm('save');" class="btn btn-primary">提交</button>
+        <button type="button" onclick="saveForm();" class="btn btn-primary">保存并提交</button>
+    </p>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <input id="code" placeholder="表单对应表名" />
+        </div>
+        <div class="col-md-4">
+            <input id="name" placeholder="表单名" />
+        </div>
+        <div class="col-md-4">
+            <input id="desc" placeholder="表单描述" />
+        </div>
+
+    </div>
+</div>
+<!--自定义表单-->
+<div class="container">
+    <form method="post" id="saveform" name="saveform" action="/index/parse.html" target="_blank">
+        <input type="hidden" name="formCode" id="formCode" />
+        <input type="hidden" name="formName" id="formName" />
+        <input type="hidden" name="formDesc" id="formDesc" />
+        <!--预览也要用 用来解析表单-->
+        <input type="hidden" name="fields" id="fields" value="@ViewBag.FieldCount">
+        <!--要提交到服务器的-->
+        <input type="hidden" name="type" id="leipi_type" value="save">
+        <input type="hidden" name="formid" id="leipi_formid" value="@ViewBag.FormID">
+        <textarea name="parse_form" id="leipi_parse_form" style="display:none;"></textarea>
+        <div class="row">
+            <script id="customFormDesign" type="text/plain" style="width:100%;">
+                @Html.Raw(ViewBag.Template)
+            </script>
+        </div><!--end row-->
+
+    </form>
+</div>
+
+<script type="text/javascript">
+
+        function saveForm() {
+            var code = $("#code").val();
+            var name = $("#name").val();
+            var desc = $("#desc").val();
+            if (code == '' || code == 'undefined') {
+                alert("编码必填")
+                return;
+            }
+            if (name == '' || name == 'undefined') {
+                alert("名称必填")
+                return;
+            }
+
+            $("#formCode").val(code);
+            $("#formName").val(name);
+            $("#formDesc").val(desc);
+
+            // commit
+            leipiFormDesign.fnCheckForm('save');
+        }
+</script>
+
+

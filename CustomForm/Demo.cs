@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,5 +30,7 @@ namespace CustomForm
             Console.WriteLine($"ID:{dobj.Name}");
             return expando;
         }
+
+        
     }
 }

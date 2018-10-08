@@ -1,0 +1,53 @@
+﻿
+@{
+    ViewBag.Title = "Maintain";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    int formID = ViewBag.FormID;
+    int templateID = ViewBag.TemplateID;
+    int customerSysNo = 1;
+}
+
+<div id="formContainer">
+    @Html.Raw(ViewBag.Template)
+</div>
+
+<div class="container">
+    <div class="row">
+        <button type="button" class="btn btn-info" id="btn">保存</button>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $("#btn").click(function () {
+                
+                var formData = $.buildEntity($("#formContainer"));
+                var data = {
+                    FormID: @templateSysNo,
+                    FormID: @templateSysNo,
+                    CustomerSysNo: @customerSysNo,
+                    Data: JSON.stringify(formData)
+                }
+
+                //异步提交数据
+                $.ajax({
+                    type: 'POST',
+                    url: '/Form/SaveCustomForm',
+                    dataType: 'json',
+                    contentType: "application/json",
+                    data: $.toJSON(data),
+                    success: function (data) {
+                        alert(data.Msg);
+                    },
+                    error: function (data) {
+                        alert('操作失败请重试！');
+                    }
+                });
+            })
+        })
+    </script>
+}
