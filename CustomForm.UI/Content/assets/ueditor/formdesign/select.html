@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
     <title>下拉菜单</title>
@@ -14,6 +14,7 @@
     <![endif]-->
     <link rel="stylesheet" href="leipi.style.css">
     <script type="text/javascript" src="../dialogs/internal.js"></script>
+    <script src="../../../../Scripts/jquery-3.3.1.js"></script>
     <script type="text/javascript">
 function createElement(type, name)
 {     
@@ -35,11 +36,30 @@ function fnSelect( combo ) {
 }
 
 function fnAdd() {
-    var olistText    = document.getElementById( "orgtext" ) ;
+    var olistText = document.getElementById( "orgtext" ) ;
     fnAddComboOption( oListText, olistText.value, olistText.value ) ;
     oListText.selectedIndex = oListText.options.length - 1 ;
     olistText.value    = '' ;
     olistText.focus() ;
+}
+
+function fnLoadData() {
+    var olistText = document.getElementById("orgUrl");
+    $.ajax({
+        type: 'GET',
+        url: '/Form/Dic',
+        dataType: 'json',
+        success: function (data) {
+            if (data.Code == 1) {
+                for (var i = 0; data.Data.length; i++) {
+                    fnAddComboOption(oListText, data.Data[i].Value, data.Data[i].Key);
+                }
+            }
+        },
+        error: function (data) {
+            alert('操作失败请手动操作！');
+        }
+    })
 }
 
 function fnModify() {
@@ -85,12 +105,14 @@ function fnChangeOptionPosition( combo, steps ) {
     }
     var oOption = combo.options[ iActualIndex ] ;
     if(oOption.value=="") {
-        var sText    = fnHTMLDecode( oOption.value ) ;
+        var sText = fnHTMLDecode(oOption.value);
+        var sValue = sText;
     } else {
-        var sText    = fnHTMLDecode( oOption.innerHTML ) ;
+        var sText = fnHTMLDecode(oOption.innerHTML);
+        var sValue = fnHTMLDecode(oOption.value);
     }
     combo.remove( iActualIndex ) ;
-    oOption = fnAddComboOption( combo, sText, sText, null, iFinalIndex ) ;
+    oOption = fnAddComboOption(combo, sText, sValue, null, iFinalIndex ) ;
     oOption.selected = true ;
 }
 
@@ -192,10 +214,12 @@ function fnSetAttribute( element, attName, attValue ) {
     <tr>
         <td>
             <div class="btn-group pull-right">
+                <a title="新增" onclick="fnLoadData();" class="btn btn-primary"><i class="icon-check"></i></a>
                 <a title="新增" onclick="fnAdd();" class="btn btn-primary"><i class="icon-white icon-plus"></i></a>
                 <a title="修改" onclick="fnModify();" class="btn btn-default"><i class="icon-edit"></i></a>
             </div>
             <input type="text" placeholder="输入列表值..." class="span2" id="orgtext">
+            <input type="text" placeholder="服务地址..." class="span2" id="orgUrl">
         </td>
         <td>
             <div class="btn-group">
@@ -223,8 +247,9 @@ window.onload = function() {
         $G('orgsize').value = gSize;
         $G('orgwidth').value = gWidth;
         for ( var i = 0 ; i < oNode.options.length ; i++ ) {
-            var sText    = oNode.options[i].value ;
-            fnAddComboOption( oListText, sText, sText ) ;
+            var sText = oNode.options[i].innerHTML;
+            var sValue = oNode.options[i].value;
+            fnAddComboOption(oListText, sText, sValue ) ;
         }
     }
     /*$('#showTips').popover();*/
@@ -267,11 +292,12 @@ dialog.onok = function (){
             
             // Add all available options.
             for ( var i = 0 ; i < oListText.options.length ; i++ ) {
-                var sText    = oListText.options[i].value ;
+                var sValue = oListText.options[i].value;
+                var sText = oListText.options[i].innerHTML;
                 if ( sText.length == 0 ) {
                     sText = sText ;
                 }
-                var oOption = fnAddComboOption( oNode, sText, sText ) ;
+                var oOption = fnAddComboOption(oNode, sText, sValue ) ;
                 if ( sText == $G('orgvalue').innerHTML ) {
                     fnSetAttribute( oOption, 'selected', 'selected' ) ;
                     oOption.selected = true ;
@@ -300,11 +326,12 @@ dialog.onok = function (){
             oNode.remove(0) ;
         }
         for ( var i = 0 ; i < $G('orglist').options.length ; i++ ) {
-            var sText    = $G('orglist').options[i].value ;
+            var sValue = $G('orglist').options[i].value;
+            var sText = $G('orglist').options[i].innerHTML;
             if ( sText.length == 0 ) {
                 sText = sText ;
             }
-            var oOption = fnAddComboOption( oNode, sText, sText ) ;
+            var oOption = fnAddComboOption(oNode, sText, sValue ) ;
             if ( sText == $G('orgvalue').innerHTML ) {
                 fnSetAttribute( oOption, 'selected', 'selected' ) ;
                 oOption.selected = true ;

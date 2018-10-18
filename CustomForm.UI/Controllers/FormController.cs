@@ -28,6 +28,19 @@ namespace CustomForm.UI.Controllers
             return Json(new { Code = 1, Msg = "维护成功!" });
         }
 
+        [HttpGet]
+        public JsonResult Dic()
+        {
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("1", "123");
+            dic.Add("2", "234");
+            List<KeyValuePair<string, string>> pairs = new List<KeyValuePair<string, string>>();
+            pairs.Add(new KeyValuePair<string, string>("1", "123"));
+            pairs.Add(new KeyValuePair<string, string>("2", "234"));
+
+            return Json(new { Code = 1, Msg = "操作成功", Data = pairs },JsonRequestBehavior.AllowGet);
+        }
+
         /// <summary>
         /// 表单模板详情
         /// </summary>
