@@ -73,23 +73,26 @@ namespace CustomForm.UI.Controllers
         /// </summary>
         /// <param name="id">真实表单编号</param>
         /// <returns></returns>
-        public ActionResult Maintain(int id)
+        public ActionResult Maintain(string tmp,int id=0)
         {
-            int.TryParse(Request.QueryString["tmp"], out int templateSysNo);
+            int.TryParse(tmp, out int templateSysNo);
 
             var template = FormMasterDA.LoadFormMaster(templateSysNo);
+            if(template != null)
+            {
+                DynamicTableInfo tableInfo = new DynamicTableInfo();
+                tableInfo.DBName = Constant.CustomFormDBName;
+                tableInfo.TableName = template.FormCode;
+                tableInfo.SysNo = id;
+                DataTable dt = FormDA.LoadFormBySysNo(tableInfo);
 
-            DynamicTableInfo tableInfo = new DynamicTableInfo();
-            tableInfo.DBName = Constant.CustomFormDBName;
-            tableInfo.TableName = template.FormCode;
-            tableInfo.SysNo = id;
-            DataTable dt = FormDA.LoadFormBySysNo(tableInfo);
+                string html = CustomFormUtils.UnparseForm(template, dt);
 
-            string html = CustomFormUtils.UnparseForm(template, dt);
-
-            ViewBag.Template = html.Replace("-|}", "").Replace("{|-", "");
-            ViewBag.FormID = tableInfo.SysNo;
-            ViewBag.TemplateID = template.SysNo;
+                ViewBag.Template = html.Replace("-|}", "").Replace("{|-", "");
+                ViewBag.FormID = tableInfo.SysNo;
+                ViewBag.TemplateID = template.SysNo;
+            }
+            
             return View();
         }
 

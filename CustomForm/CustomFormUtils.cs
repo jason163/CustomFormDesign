@@ -9,8 +9,56 @@ using System.Threading.Tasks;
 
 namespace CustomForm
 {
+    /// <summary>
+    /// 自定义表单解析工具类
+    /// </summary>
     public class CustomFormUtils
     {
+        /// <summary>
+        /// 解析HTML模板
+        /// </summary>
+        /// <param name="formMaster"></param>
+        /// <returns></returns>
+        public static string ParseForm(ParseForm parseForm)
+        {
+            string content_parse = parseForm.Parse;
+            // 表格样式
+            content_parse = content_parse.Replace("<table", "table class=\"table table - bordered\"");
+            //List<ControllerInfo> controllers = JsonConvert.DeserializeObject<List<ControllerInfo>>(parseForm.Data);
+            List<ControllerInfo> controllers = parseForm.Data;
+            Dictionary<string, string> tempController = new Dictionary<string, string>();
+            Parallel.ForEach(controllers, item => {
+                //对每个控件进行处理
+                // 控件HTML内容
+                string content = item.Content;
+                // 控件名称
+                string controllerName = item.Title;
+                switch (item.LeipiPlugins)
+                {
+                    case "text":
+                    case "textarea":
+                    case "select":
+                    case "checkboxs":
+                    case "radios":
+                        return;
+                    case "listctrl":
+                        content = ParseListCtrl(null, item);
+                        break;
+                        
+                }
+                tempController.Add(string.IsNullOrEmpty(item.parse_name) ? item.Name : item.parse_name, content);
+            });
+
+            // 替换占位符
+            foreach (var item in controllers)
+            {
+                string key = string.IsNullOrEmpty(item.parse_name) ? item.Name : item.parse_name;
+                content_parse = content_parse.Replace(string.Format("{0}", "{" + key + "}"), tempController[key]);
+            }
+
+            return content_parse;
+        }
+
         /// <summary>
         /// 根据控件输入的值和控件模板反向解析HTML
         /// </summary>
@@ -19,6 +67,12 @@ namespace CustomForm
         /// <returns>反向解析生成的HTML</returns>
         public static string UnparseForm(FormMaster formMaster,DataTable formData)
         {
+            string content_parse = formMaster.ParseTemplate;
+            // 表格样式
+            content_parse = content_parse.Replace("<table", "table class=\"table table - bordered\"");
+            List<ControllerInfo> controllers = JsonConvert.DeserializeObject<List<ControllerInfo>>(formMaster.ControllerTemplate);
+
+
             // 如果动态表中没有相应数据，则直接返回HTML模板
             if (formData == null || formData.Rows == null || formData.Rows.Count < 1)
                 return formMaster.Template;
@@ -28,12 +82,6 @@ namespace CustomForm
             {
                 formDic.Add(column.ColumnName, formData.Rows[0][column.ColumnName].ToString());
             }
-
-            string content_parse = formMaster.ParseTemplate;
-            // 表格样式
-            content_parse = content_parse.Replace("<table", "table class=\"table table - bordered\"");
-
-            List<ControllerInfo> controllers = JsonConvert.DeserializeObject<List<ControllerInfo>>(formMaster.ControllerTemplate);
 
             Dictionary<string, string> tempController = new Dictionary<string, string>();
 
@@ -95,6 +143,9 @@ namespace CustomForm
                         ckStr.Append("</span>");
                         content = ckStr.ToString();
                         break;
+                    case "listctrl":
+                        content = ParseListCtrl(formData, item);
+                        break;
                 }
                 
                 //k:data_1;v:content
@@ -110,6 +161,100 @@ namespace CustomForm
             }
 
             return content_parse;
+
+        }
+
+        /// <summary>
+        /// 逆向解析ListCtrl
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="controllerInfo"></param>
+        private static string ParseListCtrl(DataTable dataTable, ControllerInfo controllerInfo)
+        {
+            //编辑数据
+            //$def_value[$key] = !empty($value['value']) ? unserialize($value['value']) : '';
+            string orgTitle = controllerInfo.OrgTitle.TrimEnd('`');
+            string orgColType = controllerInfo.OrgColType.TrimEnd('`');
+            string orgUnit = controllerInfo.OrgUnit.TrimEnd('`');
+            string orgSum = controllerInfo.OrgSum.TrimEnd('`');
+            string orgColValue = controllerInfo.OrgColValue.TrimEnd('`');
+            string orgWidth = controllerInfo.OrgWidth.TrimEnd('`');
+
+            List<string> lstTitle = orgTitle.Split(new char[] { '`' }).ToList();
+            List<string> lstColType = orgColType.Split(new char[] { '`' }).ToList();
+            List<string> lstColSum = orgSum.Split(new char[] { '`' }).ToList();
+            List<string> lstColVal = orgColValue.Split(new char[] { '`' }).ToList();
+            List<string> lstColUnit = orgUnit.Split(new char[] { '`' }).ToList();
+
+            return ViewListCtrl(controllerInfo, dataTable, lstTitle, lstColType, lstColSum, lstColVal, lstColUnit);
+        }
+
+        private static string ViewListCtrl(ControllerInfo controllerInfo, DataTable dataTable,
+            List<string> lstTitle, List<string> lstColType, List<string> lstColSum, List<string> lstColVal,List<string> orgUnit)
+        {
+            
+            string strHead = string.Empty;
+            string strBody = string.Empty;
+            string strFooter = string.Empty;
+
+            for(int i=0;i<lstTitle.Count;i++)
+            {
+                // thead
+                strHead += (string.Format("<th>{0}</th>", lstTitle[i]));
+                // tbody
+                strBody += ("<td></td>");
+                // 需要合计
+                if (lstColSum.Count > 0)
+                {
+                    strFooter += string.Format("<td>合计：{0}</td>", orgUnit[i]);
+                }
+                else
+                {
+                    strFooter += "<td></td>";
+                }
+            }
+
+            // 有编辑值时，还原table
+            StringBuilder strBodyFooterTR = new StringBuilder();
+
+            StringBuilder tempHtml = new StringBuilder();
+            tempHtml.Append(string.Format("<table cellspacing=\"0\" class=\"table table-bordered table-condensed\" style=\"{0}\"", controllerInfo.Style));
+            tempHtml.Append("<thead>");
+            tempHtml.Append(string.Format("<tr><th colspan=\"{0}\">{1}</th></tr>",lstTitle.Count(),controllerInfo.Title));
+            // 头部
+            string header = string.Empty;
+            for (int i = 0; i < lstTitle.Count; i++)
+            {
+                header += (string.Format("<th name=\"{0}\">{0}</th>", lstTitle[i]));
+            }
+            tempHtml.Append(string.Format("<tr>{0}</tr>", header));
+            tempHtml.Append("</thead>");
+            if(dataTable != null && dataTable.Rows != null)
+            {
+                // 按行来渲染
+                for (int i = 0; i < dataTable.Rows.Count; i++)
+                {
+                    tempHtml.Append("<tr class=\"template\">");
+                    // 按列来渲染
+                    for (int j = 0; j < lstTitle.Count; j++)
+                    {
+                        tempHtml.Append(string.Format("<td><input class=\"input-medium\" " +
+                            "type=\"text\" name=\"data_1[0][]\" value=\"{0}\"></td>", dataTable.Rows[i][lstTitle[j]]));
+                    }
+                    tempHtml.Append("</tr>");
+                }
+            }
+            
+            // table内容
+            tempHtml.Append("<tbody>");          
+            
+
+            tempHtml.Append("</tbody>");
+
+            tempHtml.Append("</table>");
+
+
+            return tempHtml.ToString();
 
         }
     }

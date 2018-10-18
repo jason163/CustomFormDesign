@@ -16,6 +16,7 @@
 <div class="container">
     <div class="row">
         <button type="button" class="btn btn-info" id="btn">保存</button>
+        <button type="button" class="btn btn-info" id="btnAddRow">新增行</button>
     </div>
 </div>
 
@@ -24,9 +25,32 @@
     <script type="text/javascript">
         $(function () {
 
+            $(function () {
+                $("#savebtn").click(function () {
+                    // form
+                    var data = $.buildEntity($("#formContainer"));
+                    // datatable
+                    var dt = new Array();
+                    $("table tr").each(function () {
+                        var obj = $.buildEntity($(this));
+                        dt.push(obj);
+                    })
+                })
+
+                $("#btnAddRow").click(function () {
+                    $("table tr.template").clone(true).removeClass("template").find("td").removeAttr("style").end().appendTo($("table"));
+                })
+
+            })
             $("#btn").click(function () {
-                
+                // form
                 var formData = $.buildEntity($("#formContainer"));
+                // datatable
+                var dt = new Array();
+                $("#tb tr").each(function () {
+                    var obj = $.buildEntity($(this));
+                    dt.push(obj);
+                })
                 var data = {
                     FormID: @formID,
                     TemplateID: @templateID,

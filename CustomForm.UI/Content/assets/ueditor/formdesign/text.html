@@ -19,9 +19,10 @@
 http://www.alt-tag.com/blog/2006/02/ie-dom-bugs/ */
 function createElement(type, name)
 {     
-    var element = null;     
+    var element = null;
+    debugger
     try {        
-        element = document.createElement('<'+type+' name="'+name+'" style="border:0px;border-bottom:#000000 1px solid;">');     
+        element = document.createElement('<' + type + ' name="' + name +'" style="border:0px;border-bottom:#000000 1px solid;">');     
     } catch (e) {}   
     if(element==null) {     
         element = document.createElement(type);     
@@ -35,12 +36,12 @@ function createElement(type, name)
 <div class="content">
     <table class="table table-bordered table-striped table-hover">
      <tr>
-         <th><span>控件名称</span>><span class="label label-important">*</span></th>
-        <th><span>默认值</span> </th>
+         <th><span>控件编号</span>><span class="label label-important">*</span></th>
+        <th><span>控件描述</span> </th>
     </tr>
     <tr>
         <td><input type="text" id="orgname" placeholder="必填项"></td>
-        <td><input type="text" id="orgvalue" placeholder="无则不填"></td>
+        <td><input type="text" id="orgvalue" placeholder="必填项"></td>
     </tr>
     <tr>
         <th><span>数据类型</span> </th>
@@ -122,7 +123,7 @@ dialog.onok = function (){
     
     if( !oNode ) {
         try {
-            oNode = createElement('input','leipiNewField');
+            oNode = createElement('input', 'leipiNewField');
             oNode.setAttribute('type','text');
             oNode.setAttribute('title',gTitle);
             oNode.setAttribute('value',gValue);
@@ -158,6 +159,7 @@ dialog.onok = function (){
             }
             //oNode.setAttribute('style',style );
             //oNode.style.cssText=style;//ie7
+
             editor.execCommand('insertHtml',oNode.outerHTML);
         } catch (e) {
             try {

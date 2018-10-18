@@ -10,7 +10,6 @@
     <meta name="viewport" content="width=device-width" />
     <title>Preview</title>
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
     <div id="formContainer">
@@ -24,7 +23,18 @@
     <script type="text/javascript">
         $(function () {
             $("#savebtn").click(function () {
+                // form
                 var data = $.buildEntity($("#formContainer"));
+                // datatable
+                var dt = new Array();
+                $("#tb tr").each(function () {
+                    var obj = $.buildEntity($(this));
+                    dt.push(obj);
+                })
+            })
+
+            $("#btnAddRow").click(function () {
+                $("#tb .template").clone(true).removeClass("template").find("input").val("").end().appendTo($("#tb"));
             })
             
         })

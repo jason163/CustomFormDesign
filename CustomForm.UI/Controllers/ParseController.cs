@@ -34,12 +34,13 @@ namespace CustomForm.UI.Controllers
             }
             else
             {
-                master.FormCode = string.Format("dbo.{0}", formInfo.FormCode); //"dbo.customertable1";
+                master.FormCode = string.Format("{1}.{0}", formInfo.FormCode,Constant.CustomFormSchema); //"dbo.customertable1";
                 master.FormName = formInfo.FormName;// "testForm";
                 master.FormDesc = formInfo.FormDesc;
             }
             // 表名
             customTableInfo.TableName = master.FormCode;
+            customTableInfo.Schema = Constant.CustomFormSchema;
             master.FormType = 0;
             master.Template = form.Template;
             master.ParseTemplate = form.Parse;
@@ -68,7 +69,7 @@ namespace CustomForm.UI.Controllers
             else
             {
                 // 验证
-                DataTable dt = TableValidateDA.QueryTableColumns(Constant.CustomFormDBName, customTableInfo.TableName);
+                DataTable dt = DynamicTableInfoDA.QueryTableColumns(Constant.CustomFormDBName, customTableInfo.TableName);
                 List<string> columns = new List<string>();
                 if (dt != null && dt.Rows != null && dt.Rows.Count > 0)
                 {

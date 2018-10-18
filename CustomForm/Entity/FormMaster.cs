@@ -65,6 +65,11 @@ namespace CustomForm.Entity
         public string ControllerTemplate { get; set; }
 
         /// <summary>
+        /// 操作类型
+        /// </summary>
+        public int Action { get; set; }
+
+        /// <summary>
         /// 模板控件数
         /// </summary>
         public int FieldCount

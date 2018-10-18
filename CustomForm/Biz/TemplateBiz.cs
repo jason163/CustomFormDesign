@@ -23,6 +23,7 @@ namespace CustomForm.Biz
         public static void Maintain(CustomFormInfo formInfo)
         {
             ParseForm form = JsonConvert.DeserializeObject<ParseForm>(formInfo.ParseForm);
+            //string html = CustomFormUtils.ParseForm(form);
             if (int.Parse(formInfo.Formid) > 1)
             {
                 
@@ -67,11 +68,12 @@ namespace CustomForm.Biz
                 field.Prority = 2;
                 customTableInfo.Columns.Add(field);
             }
-
-            using(ITransaction ts = TransactionManager.Create())
+            List<PropertyDBInfo> infos = DynamicBiz.GenerateByCustomTableInfo(customTableInfo);
+            using (ITransaction ts = TransactionManager.Create())
             {
                 FormMasterDA.InsertFormMaster(master);
                 FormDA.CreateFormTable(customTableInfo);
+                DynamicBiz.SaveDynamicTableInfo(infos);
 
                 ts.Complete();
             }
@@ -137,7 +139,7 @@ namespace CustomForm.Biz
         private static void ValidateDynamicTableStruct(CustomTableInfo customTableInfo,ParseForm form)
         {
             // 验证
-            DataTable dt = TableValidateDA.QueryTableColumns(Constant.CustomFormDBName, customTableInfo.TableName);
+            DataTable dt = DynamicTableInfoDA.QueryTableColumns(Constant.CustomFormDBName, customTableInfo.TableName);
             List<string> columns = new List<string>();
             if (dt != null && dt.Rows != null && dt.Rows.Count > 0)
             {

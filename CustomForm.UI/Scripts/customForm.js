@@ -132,7 +132,9 @@ var leipiFormDesign = {
                 template_parse = template_parse.replace(plugin, '{' + name + '}');
                 template_parse = template_parse.replace('{| -', '');
                 template_parse = template_parse.replace('-|}', '');
-                template_data[pno] = attr_arr_all;
+                if (attr_arr_all != null) {
+                    template_data[pno] = attr_arr_all;
+                }
                 checkboxs++;
 
             } else if (name) {
@@ -180,12 +182,14 @@ var leipiFormDesign = {
                     //add_fields[arr['name']] = arr;
                     add_fields.push(arr);
                 }
-                template_data[pno] = attr_arr_all;
-
-
+                if (attr_arr_all != null) {
+                    template_data[pno] = attr_arr_all;
+                }
             }
             pno++;
         })
+
+        template_data = leipiFormDesign.fnRemoveNull(template_data);
         var parse_form = new Object({
             'FieldCount': fields,//总字段数
             'Template': template,//完整html
@@ -234,7 +238,7 @@ var leipiFormDesign = {
                 FormCode: $("#formCode").val(),
                 FormName: $("#formName").val(),
                 FormDesc: $("#formDesc").val(),
-                ParseForm: decodeURIComponent(parse_form)
+                ParseForm: decodeURIComponent(parse_form.replace(/%/g, '%25'))
             };
             //异步提交数据
             $.ajax({
@@ -284,6 +288,18 @@ var leipiFormDesign = {
             alert('表单内容不能为空！');
             return false;
         }
+    },
+    /*移除数组中无效项*/
+    fnRemoveNull: function (list) {
+        var rst = new Array();
+        if (list.length > 0) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i] != undefined) {
+                    rst.push(list[i]);
+                }
+            }
+        }
+        return rst;
     }
 };
 

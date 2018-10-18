@@ -81,16 +81,49 @@ namespace CustomForm.Entity
         /// </summary>
         public int IsNew { get; set; }
 
-        public string Style { get; set; }
 
         /// <summary>
         /// 控件HTML
         /// </summary>
         public string Content { get; set; }
 
+        
         #region Select&CheckBox
         public string Selected { get; set; }
         public string Checked { get; set; }
+        #endregion
+
+        //"orgtitle": "a`b`c`",
+		//"orgcoltype": "text`text`text`",
+		//"orgunit": "ml`ml`ml`",
+		//"orgsum": "0`0`0`",
+		//"orgcolvalue": "1`1`1`",
+		//"orgwidth": "100%",
+        #region CtrList
+        /// <summary>
+        /// 列名数组
+        /// </summary>
+        public string OrgTitle { get; set; }
+        /// <summary>
+        /// 列类型
+        /// </summary>
+        public string OrgColType { get; set; }
+        /// <summary>
+        /// 单位
+        /// </summary>
+        public string OrgUnit { get; set; }
+        /// <summary>
+        /// 列总和
+        /// </summary>
+        public string OrgSum { get; set; }
+        /// <summary>
+        /// 列默认值
+        /// </summary>
+        public string OrgColValue { get; set; }
+        /// <summary>
+        /// 控件宽度
+        /// </summary>
+        public string OrgWidth { get; set; }
         #endregion
     }
 
@@ -109,11 +142,16 @@ namespace CustomForm.Entity
         public string Title { get; set; }
 
         /// <summary>
+        /// 控件描述
+        /// </summary>
+        public string Value { get; set; }
+
+        public string Style { get; set; }
+
+        /// <summary>
         /// 替换名
         /// </summary>
         public string parse_name { get; set; }
-
-        public string Value { get; set; }
 
         /// <summary>
         /// 控件类型

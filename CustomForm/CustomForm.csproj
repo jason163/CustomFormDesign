@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BizException.cs" />
+    <Compile Include="Biz\DynamicBiz.cs" />
     <Compile Include="Biz\TemplateBiz.cs" />
     <Compile Include="Constant.cs" />
     <Compile Include="CustomFormUtils.cs" />
